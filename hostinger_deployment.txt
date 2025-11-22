@@ -1,0 +1,49 @@
+# Deployment Guide for Hostinger
+
+Since this application is built with React (Vite), it is a Single Page Application (SPA). Hostinger hosts these very easily as static files.
+
+## 1. Build the Project
+On your local machine or development environment, run:
+> npm install
+> npm run build
+
+This will create a `dist` folder in your project root. This folder contains all the HTML, CSS, and JavaScript files needed for your website.
+
+## 2. Prepare Hostinger
+1. Log in to your Hostinger hPanel.
+2. Go to **File Manager** (Access files of your domain).
+3. Navigate to the `public_html` folder.
+4. Delete the default `default.php` or `index.php` if they exist (make sure the folder is empty or backup old files).
+
+## 3. Upload Files
+1. Open the `dist` folder on your computer.
+2. Select ALL files inside `dist` (index.html, assets folder, vite.svg, etc.).
+3. Drag and drop them into the `public_html` folder in Hostinger File Manager.
+4. Alternatively, zip the contents of `dist`, upload the zip, and extract it inside `public_html`.
+
+## 4. Routing Fix (Important for SPAs)
+If you use React Router (not strictly used in this specific single-page version, but good practice):
+Create a new file in `public_html` named `.htaccess` and add this content to ensure refreshing the page doesn't give a 404 error:
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+## 5. Admin & Data
+- **Admin Access:** Click the "Hamburger Menu" -> "Admin Login".
+- **Data Persistence:** This app uses `localStorage`. Changes to the menu will persist on the *specific browser* you use to edit them. 
+- **Production Note:** For a real multi-user production app where the owner updates the menu from their phone and customers see it instantly on theirs, you would need to connect this to a backend like Firebase or Supabase. 
+
+## 6. QR Code
+To create your QR menu:
+1. Publish the site (e.g., www.your-stuffitt-clone.com).
+2. Go to a QR code generator (like qr-code-generator.com).
+3. Paste your new URL.
+4. Download the QR image and print it for your tables.
