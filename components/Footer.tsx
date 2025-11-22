@@ -1,12 +1,19 @@
 
 import React from 'react';
 import { Heart, Lock, Instagram, Facebook } from 'lucide-react';
+import { RestaurantConfig } from '../types';
 
 interface FooterProps {
   onOpenAdmin: () => void;
+  config?: RestaurantConfig;
 }
 
-const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
+const Footer: React.FC<FooterProps> = ({ onOpenAdmin, config }) => {
+  const footerLogo = config?.images?.footerLogo;
+  const instaLink = config?.contact?.instagram || '#';
+  const fbLink = config?.contact?.facebook || '#';
+  const footerDesc = config?.text?.footerDescription || "Handcrafted burgers, sliders, and fries made with passion.";
+
   return (
     <footer className="bg-[#1a1e26] text-white pt-16 pb-8 px-6 mt-10">
         <div className="container mx-auto max-w-4xl">
@@ -15,14 +22,18 @@ const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             {/* Brand Info */}
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                  <span className="text-[0.6rem] font-bold text-orange-400 text-center leading-tight">STUFF<br/>ITT</span>
-                </div>
+                {footerLogo ? (
+                    <img src={footerLogo} alt="Footer Logo" className="w-12 h-12 object-contain" />
+                ) : (
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                      <span className="text-[0.6rem] font-bold text-orange-400 text-center leading-tight">STUFF<br/>ITT</span>
+                    </div>
+                )}
                 <h2 className="text-2xl font-bold brand-font text-white">STUFFITT</h2>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-2">Stuff It. Snap It. Share It.</p>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Handcrafted burgers, sliders, and fries made with passion.
+                {footerDesc}
               </p>
             </div>
 
@@ -56,10 +67,10 @@ const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
 
               {/* Social Icons & Admin Access - Hidden on Mobile/Tablet (lg:flex) */}
               <div className="col-span-2 pt-4 gap-4 items-center hidden lg:flex">
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-white transition-all">
+                  <a href={instaLink} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-white transition-all">
                     <Instagram size={18} />
                   </a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all">
+                  <a href={fbLink} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all">
                     <Facebook size={18} />
                   </a>
                   {/* Website Editor Lock Icon */}

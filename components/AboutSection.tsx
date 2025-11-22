@@ -1,25 +1,63 @@
-import React from 'react';
-import { Heart } from 'lucide-react';
 
-const AboutSection: React.FC = () => {
+import React from 'react';
+import { RestaurantConfig } from '../types';
+import EditableText from './EditableText';
+
+interface AboutSectionProps {
+  config: RestaurantConfig;
+  isEditing: boolean;
+  onTextChange: (key: keyof RestaurantConfig['text'], value: string) => void;
+}
+
+const AboutSection: React.FC<AboutSectionProps> = ({ config, isEditing, onTextChange }) => {
+  const logoUrl = config?.images?.aboutLogo;
+
+  // Safety check for older configs
+  const title = config.text?.aboutTitle || "About Us";
+  const subtitle = config.text?.aboutSubtitle || "Our story, our passion, our commitment to great food! ❤️";
+  const description = config.text?.aboutDescription || "We're passionate about handcrafted food...";
+
   return (
     <section id="about" className="py-16 px-6 bg-white rounded-[3rem] mx-2 mb-8 shadow-sm border border-orange-50">
          <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-4xl font-bold brand-font text-[#D84315] mb-4">About Us</h3>
-            <p className="text-gray-500 font-medium mb-8">Our story, our passion, our commitment to great food! ❤️</p>
             
-            {/* Floating Heart */}
-            <div className="w-20 h-20 bg-gradient-to-br from-[#FFA500] to-[#E53935] rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-red-200">
-                <Heart fill="white" size={32} className="text-white" />
-            </div>
+            <EditableText
+                tag="h3"
+                text={title}
+                isEditing={isEditing}
+                onSave={(val) => onTextChange('aboutTitle', val)}
+                className="text-4xl font-bold brand-font text-[#D84315] mb-4 inline-block"
+            />
+
+            <EditableText
+                tag="p"
+                text={subtitle}
+                isEditing={isEditing}
+                onSave={(val) => onTextChange('aboutSubtitle', val)}
+                className="text-gray-500 font-medium mb-8 block"
+            />
+            
+            {/* Dynamic About Logo */}
+            {logoUrl && (
+                <div className="flex justify-center mb-6">
+                    <img 
+                        src={logoUrl} 
+                        alt="About Logo" 
+                        className="w-24 h-24 object-contain drop-shadow-md hover:scale-105 transition-transform duration-300" 
+                    />
+                </div>
+            )}
 
             <h4 className="text-3xl font-bold brand-font text-brand-dark mb-6">By Saima & Akram</h4>
-            <p className="text-gray-600 leading-loose mb-6 text-lg">
-                We're passionate about handcrafted food that brings people together. At STUFFITT, every burger, slider, and fry is made with love, using the finest ingredients and time-tested recipes.
-            </p>
-            <p className="text-gray-600 leading-loose text-lg">
-                Our journey started with a simple dream: to create a place where great food meets great memories. Today, we're proud to serve our community with dishes that make every meal special. 🍔✨
-            </p>
+            
+            <EditableText
+                tag="p"
+                text={description}
+                isEditing={isEditing}
+                onSave={(val) => onTextChange('aboutDescription', val)}
+                className="text-gray-600 leading-loose mb-6 text-lg whitespace-pre-wrap block"
+                multiline={true}
+            />
          </div>
     </section>
   );

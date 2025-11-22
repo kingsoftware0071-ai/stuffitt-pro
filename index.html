@@ -2,31 +2,49 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>STUFFITT | Stuff It. Snap It. Share It.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&family=Oswald:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+      /* Defaults will be overridden by App.tsx dynamic styles */
       body {
         font-family: 'Poppins', sans-serif;
-        background-color: #FFFAF5; /* Creamy background from screenshot */
+        background-color: #FFFAF5;
       }
       h1, h2, h3, .brand-font {
         font-family: 'Playfair Display', serif;
       }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
+      
+      /* Custom Scrollbar - Desktop/Laptop Only (1024px+) */
+      @media (min-width: 1024px) {
+        ::-webkit-scrollbar {
+          width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #e53935; 
+          border-radius: 10px;
+        }
       }
-      ::-webkit-scrollbar-track {
-        background: #f1f1f1; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #e53935; 
-        border-radius: 10px;
+
+      /* Hide Scrollbar on Mobile & Tablet (up to 1023px) */
+      @media (max-width: 1023px) {
+        ::-webkit-scrollbar {
+          display: none;
+        }
+        * {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
       }
     </style>
     <script>
@@ -40,6 +58,15 @@
                 dark: '#2D2D2D',
                 cream: '#FFFAF5'
               }
+            },
+            keyframes: {
+              'wobble-slow': {
+                '0%, 100%': { transform: 'rotate(-1deg) translateY(0px)' },
+                '50%': { transform: 'rotate(1deg) translateY(-8px)' },
+              }
+            },
+            animation: {
+              'wobble-slow': 'wobble-slow 5s ease-in-out infinite',
             }
           }
         }
@@ -51,7 +78,9 @@
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-qr-code": "https://aistudiocdn.com/react-qr-code@^2.0.15",
+    "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
   }
 }
 </script>

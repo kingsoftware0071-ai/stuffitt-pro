@@ -1,0 +1,45 @@
+
+# How to Fix "Changes Not Showing on Other Devices"
+
+The issue is that the app is currently saving data to your **Browser's Local Storage**. This means data stays on your computer and doesn't go to the internet.
+
+To fix this, you need a **Database**. We have added support for **Supabase** (a free, easy database).
+
+## Step 1: Create a Database
+1. Go to [https://supabase.com](https://supabase.com) and click "Start your project".
+2. Sign up (it's free).
+3. Create a New Project (Name it "Stuffitt", set a password, choose a region).
+4. Wait for it to set up (takes 1-2 mins).
+
+## Step 2: Get Your API Keys
+1. In your Supabase Dashboard, go to **Project Settings** (Gear icon) > **API**.
+2. Copy the **Project URL**.
+3. Copy the **anon / public** Key.
+
+## Step 3: Add Keys to Your Code
+1. Open the file `constants.ts` in your project.
+2. Find `SUPABASE_CONFIG`.
+3. Paste your URL and Key inside the quotes.
+   ```typescript
+   export const SUPABASE_CONFIG = {
+     url: 'https://your-project.supabase.co',
+     key: 'your-long-key-here'
+   };
+   ```
+
+## Step 4: Run the Database Script
+1. In Supabase Dashboard, click on **SQL Editor** (icon looks like a terminal `>_` on the left).
+2. Click **New Query**.
+3. Open the file `database_setup.sql` from your project folder.
+4. Copy ALL the text from that file and paste it into the Supabase SQL Editor.
+5. Click **Run** (bottom right).
+   - You should see "Success" or "No rows returned".
+
+## Step 5: Re-Deploy
+1. Build your project again: `npm run build`.
+2. Upload the new `dist` folder to Hostinger (delete the old files first).
+
+## Done!
+Now, when you click "Save Changes" in the Admin Panel:
+1. It saves to the Cloud.
+2. When anyone else opens the website on their phone/laptop, they will pull the data from the Cloud and see your changes instantly.

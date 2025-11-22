@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { MenuItem, Category } from '../types';
-import { X, Trash2, Plus, Image, Search, Tag, Edit3, Check, Save, Grid, List, Layers } from 'lucide-react';
+import { X, Trash2, Plus, Image, Search, Tag, Edit3, Check, Save, Grid, List, Layers, Eye, EyeOff } from 'lucide-react';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -27,8 +27,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
     category: string;
     isVeg: boolean;
     imageUrl: string;
+    visible: boolean;
   }>({
-    name: '', price: '', description: '', category: '', isVeg: true, imageUrl: ''
+    name: '', price: '', description: '', category: '', isVeg: true, imageUrl: '', visible: true
   });
 
   // Category Management State
@@ -69,12 +70,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
       description: item.description,
       category: item.category,
       isVeg: item.isVeg,
-      imageUrl: item.imageUrl
+      imageUrl: item.imageUrl,
+      visible: item.visible !== false
     });
     // Scroll to form on mobile
     if (window.innerWidth < 768) {
         formTopRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleToggleVisible = (item: MenuItem) => {
+      setMenuItems(prev => prev.map(i => i.id === item.id ? { ...i, visible: !i.visible } : i));
   };
 
   const resetForm = () => {
@@ -86,7 +92,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
         description: '', 
         category: categories[0]?.id || '', 
         isVeg: true, 
-        imageUrl: '' 
+        imageUrl: '',
+        visible: true
     });
   };
 
@@ -104,7 +111,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
             description: formData.description,
             category: formData.category,
             imageUrl: formData.imageUrl || item.imageUrl,
-            isVeg: formData.isVeg
+            isVeg: formData.isVeg,
+            visible: formData.visible
           };
         }
         return item;
@@ -118,7 +126,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
         description: formData.description || '',
         category: formData.category || categories[0]?.id || 'starters',
         imageUrl: formData.imageUrl || `https://picsum.photos/seed/${Date.now()}/400/300`,
-        isVeg: formData.isVeg
+        isVeg: formData.isVeg,
+        visible: formData.visible
       };
       setMenuItems(prev => [newItem, ...prev]);
     }
@@ -136,7 +145,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
       return;
     }
     
-    const newCat = { id, label: newCategoryName };
+    const newCat = { id, label: newCategoryName, visible: true };
     setCategories(prev => [...prev, newCat]);
     setFormData({ ...formData, category: id }); // Auto-select new category
     setNewCategoryName('');
@@ -154,6 +163,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
     setCategories(prev => prev.map(c => c.id === id ? { ...c, label: editCategoryLabel } : c));
     setEditingCategoryId(null);
     setEditCategoryLabel('');
+  };
+
+  const handleToggleCategoryVisible = (id: string) => {
+      setCategories(prev => prev.map(c => c.id === id ? { ...c, visible: !c.visible } : c));
   };
 
   const handleDeleteCategory = (id: string) => {
@@ -186,7 +199,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
   );
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center p-0 md:p-4 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4 bg-black/70 backdrop-blur-sm">
       
       {/* Main Container */}
       <div className="bg-gray-50 w-full md:max-w-7xl h-full md:h-[90vh] md:rounded-3xl shadow-2xl flex flex-col overflow-hidden">
@@ -198,8 +211,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                     <Grid size={24} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold text-gray-800">Menu Dashboard</h2>
-                    <p className="text-xs text-gray-500">Manage your food items & categories</p>
+                    <h2 className="text-xl font-bold text-gray-800">Menu Manager</h2>
+                    <p className="text-xs text-gray-500">Control menu visibility, items, and photos</p>
                 </div>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors">
@@ -231,7 +244,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                         
                         {/* Image Upload */}
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Item Image</label>
+                            <label className="text-xs font-bold text-gray-500 uppercase">Item Photo</label>
                             <div 
                                 onClick={() => fileInputRef.current?.click()}
                                 className="relative h-48 w-full bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-all group overflow-hidden"
@@ -240,13 +253,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                                     <>
                                         <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <span className="text-white font-medium text-sm">Change Image</span>
+                                            <span className="text-white font-medium text-sm">Change Photo</span>
                                         </div>
                                     </>
                                 ) : (
                                     <>
                                         <Image className="text-gray-300 mb-2 group-hover:text-orange-400" size={32} />
-                                        <span className="text-xs text-gray-400 group-hover:text-orange-500">Click to upload</span>
+                                        <span className="text-xs text-gray-400 group-hover:text-orange-500">Click to upload photo</span>
                                     </>
                                 )}
                                 <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
@@ -336,17 +349,29 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                                 />
                             </div>
                             
-                            {/* Veg/Non-Veg Toggle */}
-                            <div 
-                                onClick={() => setFormData({...formData, isVeg: !formData.isVeg})}
-                                className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${formData.isVeg ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}
-                            >
-                                <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${formData.isVeg ? 'border-green-600' : 'border-red-600'}`}>
-                                    <div className={`w-3 h-3 rounded-full ${formData.isVeg ? 'bg-green-600' : 'bg-red-600'}`}></div>
+                            {/* Veg/Non-Veg Toggle & Visibility */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <div 
+                                    onClick={() => setFormData({...formData, isVeg: !formData.isVeg})}
+                                    className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${formData.isVeg ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}
+                                >
+                                    <div className={`w-4 h-4 rounded-full flex items-center justify-center border ${formData.isVeg ? 'border-green-600' : 'border-red-600'}`}>
+                                        <div className={`w-2.5 h-2.5 rounded-full ${formData.isVeg ? 'bg-green-600' : 'bg-red-600'}`}></div>
+                                    </div>
+                                    <span className={`text-xs font-bold ${formData.isVeg ? 'text-green-700' : 'text-red-700'}`}>
+                                        {formData.isVeg ? 'Veg' : 'Non-Veg'}
+                                    </span>
                                 </div>
-                                <span className={`text-sm font-bold ${formData.isVeg ? 'text-green-700' : 'text-red-700'}`}>
-                                    {formData.isVeg ? 'Vegetarian Item' : 'Non-Vegetarian Item'}
-                                </span>
+
+                                <div 
+                                    onClick={() => setFormData({...formData, visible: !formData.visible})}
+                                    className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${formData.visible ? 'bg-blue-50 border-blue-200' : 'bg-gray-100 border-gray-200'}`}
+                                >
+                                    {formData.visible ? <Eye size={16} className="text-blue-600" /> : <EyeOff size={16} className="text-gray-400" />}
+                                    <span className={`text-xs font-bold ${formData.visible ? 'text-blue-700' : 'text-gray-500'}`}>
+                                        {formData.visible ? 'Visible' : 'Hidden'}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -406,12 +431,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                             {filteredItems.map(item => (
                                 <div 
                                     key={item.id}
-                                    className={`bg-white rounded-xl p-3 shadow-sm border flex gap-3 transition-all hover:shadow-md ${editingId === item.id ? 'border-blue-500 ring-1 ring-blue-100' : 'border-gray-100'}`}
+                                    className={`bg-white rounded-xl p-3 shadow-sm border flex gap-3 transition-all hover:shadow-md relative ${editingId === item.id ? 'border-blue-500 ring-1 ring-blue-100' : 'border-gray-100'} ${item.visible === false ? 'opacity-60' : ''}`}
                                 >
                                     {/* Thumbnail */}
                                     <div className="w-20 h-20 rounded-lg bg-gray-100 shrink-0 overflow-hidden relative">
                                         <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
                                         <div className={`absolute top-1 left-1 w-2 h-2 rounded-full ${item.isVeg ? 'bg-green-500' : 'bg-red-500'} border border-white`}></div>
+                                        {item.visible === false && (
+                                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                                <EyeOff size={16} className="text-white" />
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Info */}
@@ -425,8 +455,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                                     <div className="flex flex-col gap-2 justify-center border-l border-gray-100 pl-3 relative">
                                         <button 
                                             type="button"
+                                            onClick={() => handleToggleVisible(item)}
+                                            className={`cursor-pointer p-2 rounded-lg border shadow-sm transition-all relative z-20 ${item.visible !== false ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-gray-100 text-gray-400 border-gray-200'}`}
+                                            title={item.visible !== false ? "Hide Item" : "Show Item"}
+                                        >
+                                            {item.visible !== false ? <Eye size={18} /> : <EyeOff size={18} />}
+                                        </button>
+                                        <button 
+                                            type="button"
                                             onClick={() => handleEditItem(item)}
-                                            className="cursor-pointer p-2 bg-white hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-lg border border-gray-100 hover:border-blue-200 shadow-sm transition-all relative z-20"
+                                            className="cursor-pointer p-2 bg-white hover:bg-orange-50 text-gray-400 hover:text-orange-600 rounded-lg border border-gray-100 hover:border-orange-200 shadow-sm transition-all relative z-20"
                                             title="Edit Item"
                                         >
                                             <Edit3 size={18} />
@@ -458,7 +496,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                     {activeTab === 'categories' && (
                         <div className="space-y-3">
                             {categories.map(cat => (
-                                <div key={cat.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-shadow">
+                                <div key={cat.id} className={`bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-shadow ${cat.visible === false ? 'opacity-60 bg-gray-50' : ''}`}>
                                     
                                     {editingCategoryId === cat.id ? (
                                         <div className="flex-1 flex gap-2 mr-4">
@@ -481,7 +519,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
                                                 <Tag size={18} />
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-gray-800 text-base">{cat.label}</h4>
+                                                <h4 className="font-bold text-gray-800 text-base flex items-center gap-2">
+                                                    {cat.label}
+                                                    {cat.visible === false && <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">Hidden</span>}
+                                                </h4>
                                                 <p className="text-xs text-gray-400 font-mono mt-0.5">ID: {cat.id}</p>
                                             </div>
                                         </div>
@@ -489,6 +530,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, menuItems, set
 
                                     {editingCategoryId !== cat.id && (
                                         <div className="flex gap-2 relative">
+                                             <button 
+                                                type="button"
+                                                onClick={() => handleToggleCategoryVisible(cat.id)}
+                                                className={`cursor-pointer p-2 rounded-lg border transition-colors relative z-10 ${cat.visible !== false ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-gray-200 text-gray-500 border-gray-300'}`}
+                                                title={cat.visible !== false ? "Hide Category" : "Show Category"}
+                                            >
+                                                {cat.visible !== false ? <Eye size={18} /> : <EyeOff size={18} />}
+                                            </button>
                                             <button 
                                                 type="button"
                                                 onClick={() => handleStartEditCategory(cat)}

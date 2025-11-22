@@ -7,13 +7,15 @@ interface FoodGalleryProps {
 }
 
 const FoodGallery: React.FC<FoodGalleryProps> = ({ config }) => {
-  // Default fallback if config is not fully loaded
-  const images = config?.images?.gallery || [];
+  // Default fallback if config is not fully loaded or incorrect format
+  const rawImages = config?.images?.gallery;
+  const images = Array.isArray(rawImages) ? rawImages : [];
+  const bgColor = config?.colors?.background || '#FFFAF5';
 
   if (images.length === 0) return null;
 
   return (
-    <section className="py-16 px-4" style={{ backgroundColor: config?.colors.background }}>
+    <section className="py-16 px-4" style={{ backgroundColor: bgColor }}>
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-[#D84315] brand-font mb-3">Food Gallery</h2>
         <p className="text-gray-500">A visual feast! Check out our mouth-watering creations 📸 🍔</p>

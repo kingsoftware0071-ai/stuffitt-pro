@@ -1,40 +1,50 @@
+
 import React from 'react';
 import { Map, MapPin } from 'lucide-react';
+import { RestaurantConfig } from '../types';
 
-const LocationSection: React.FC = () => {
+interface LocationSectionProps {
+  config?: RestaurantConfig;
+}
+
+const LocationSection: React.FC<LocationSectionProps> = ({ config }) => {
+  // Use the configured Embed URL or fallback to a default one
+  const mapUrl = config?.contact?.mapEmbedUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.792539393723!2d72.8773928!3d19.0728174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c88e722c4a03%3A0x95e938324396122d!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1708600000000!5m2!1sen!2sin";
+
   return (
     <section className="py-12 px-4 text-center">
       <h2 className="text-3xl font-bold text-[#D84315] brand-font mb-8">Find Us Here</h2>
       
       <div className="max-w-md mx-auto bg-white p-2 rounded-2xl shadow-lg border border-gray-100 transform rotate-1 hover:rotate-0 transition-transform duration-500">
         <div className="relative rounded-xl overflow-hidden bg-gray-100 h-64 w-full group">
-            {/* Simulated Map Image */}
-            <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/OpenStreetMap_Warsaw.png/800px-OpenStreetMap_Warsaw.png" 
-                alt="Map Location" 
-                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-            />
-            {/* Map Pin Overlay */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full">
-                <div className="text-red-600 drop-shadow-lg animate-bounce">
-                    <MapPin size={48} fill="currentColor" />
-                </div>
-            </div>
-            {/* Zoom Controls Simulation */}
-            <div className="absolute top-4 left-4 bg-white rounded shadow flex flex-col">
-                <div className="p-2 border-b text-gray-600 font-bold hover:bg-gray-50 cursor-pointer">+</div>
-                <div className="p-2 text-gray-600 font-bold hover:bg-gray-50 cursor-pointer">-</div>
-            </div>
-            {/* Attribution */}
-            <div className="absolute bottom-0 right-0 bg-white/80 text-[10px] px-2 py-1 text-gray-600">
-                © OpenStreetMap contributors
-            </div>
+            
+            {/* Interactive Google Maps Embed */}
+            <iframe 
+                src={mapUrl}
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
+                title="Google Maps Location"
+            ></iframe>
+            
         </div>
       </div>
 
       <div className="mt-6 flex flex-col items-center gap-2">
         <p className="text-gray-600">Visit us for a delightful dining experience!</p>
-        <Map className="text-blue-400" size={24} />
+        <a 
+            href={mapUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium transition-colors"
+        >
+            <Map size={20} />
+            <span>Open in Maps</span>
+        </a>
       </div>
     </section>
   );

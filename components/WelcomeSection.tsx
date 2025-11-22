@@ -2,14 +2,17 @@
 import React from 'react';
 import { Utensils, Smartphone } from 'lucide-react';
 import { RestaurantConfig } from '../types';
+import EditableText from './EditableText';
 
 interface WelcomeSectionProps {
   config: RestaurantConfig;
+  isEditing: boolean;
+  onTextChange: (key: keyof RestaurantConfig['text'], value: string) => void;
 }
 
-const WelcomeSection: React.FC<WelcomeSectionProps> = ({ config }) => {
+const WelcomeSection: React.FC<WelcomeSectionProps> = ({ config, isEditing, onTextChange }) => {
   return (
-    <section className="relative pt-10 pb-20 px-4 text-center">
+    <section className="relative pt-10 pb-10 px-4 text-center">
       {/* Badge */}
       <div 
         style={{ background: `linear-gradient(to right, ${config.colors.primary}, ${config.colors.secondary})` }}
@@ -20,24 +23,33 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ config }) => {
 
       {/* Main Heading */}
       <div className="mb-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-        <h1 
-            className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text brand-font leading-tight drop-shadow-sm"
+        <EditableText
+            tag="h1"
+            text={config.text.welcomeTitle}
+            isEditing={isEditing}
+            onSave={(val) => onTextChange('welcomeTitle', val)}
+            className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text brand-font leading-tight drop-shadow-sm"
             style={{ backgroundImage: `linear-gradient(to right, #D84315, #E65100)` }}
-        >
-            {config.text.welcomeTitle.split(' ').slice(0, -1).join(' ')} <br />
-            <span style={{ color: '#BF360C' }}>{config.text.welcomeTitle.split(' ').slice(-1)}</span>
-        </h1>
+        />
       </div>
 
       {/* Subheading */}
-      <h2 className="text-brand-dark font-bold text-lg md:text-xl mb-6 tracking-wide animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-        {config.text.welcomeSubtitle}
-      </h2>
+      <EditableText
+        tag="h2"
+        text={config.text.welcomeSubtitle}
+        isEditing={isEditing}
+        onSave={(val) => onTextChange('welcomeSubtitle', val)}
+        className="text-brand-dark font-bold text-lg md:text-xl mb-6 tracking-wide animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 block"
+      />
 
       {/* Description */}
-      <p className="text-gray-600 max-w-lg mx-auto leading-relaxed mb-10 px-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
-        {config.text.welcomeDescription}
-      </p>
+      <EditableText
+        tag="p"
+        text={config.text.welcomeDescription}
+        isEditing={isEditing}
+        onSave={(val) => onTextChange('welcomeDescription', val)}
+        className="text-gray-600 max-w-lg mx-auto leading-relaxed mb-10 px-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300 block"
+      />
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto mb-12 animate-in fade-in slide-in-from-bottom-12 duration-700 delay-400">
@@ -56,16 +68,12 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ config }) => {
         </button>
       </div>
 
-      {/* Featured Image Fade */}
-      <div className="relative w-full max-w-2xl mx-auto -mb-32 z-0 animate-in fade-in zoom-in duration-1000 delay-500">
-          <div 
-            className="absolute inset-0 z-10 h-full"
-            style={{ background: `linear-gradient(to top, ${config.colors.background} 10%, transparent)` }}
-          ></div>
+      {/* Featured Image */}
+      <div className="relative w-full max-w-xl mx-auto z-0 animate-in fade-in zoom-in duration-1000 delay-500">
           <img 
             src={config.images?.hero || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'} 
             alt="Delicious Burger" 
-            className="w-full rounded-t-[3rem] shadow-2xl object-cover h-[400px]"
+            className="w-full rounded-[2rem] shadow-2xl object-cover h-[350px] md:h-[450px] animate-wobble-slow"
           />
       </div>
     </section>
